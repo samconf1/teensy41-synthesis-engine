@@ -12,9 +12,11 @@ extern unsigned long _sbss;
 extern unsigned long _ebss;
 extern unsigned long _flexram_bank_config;
 
+
 void ResetHandler(void);
 static void fault_isr(void);
 static void unused_isr(void);
+extern void DMA4_DMA20_IRQHandler(void);
 extern int main(void);
 
 // Vector table — goes into .startup, which stays in FLASH
@@ -36,7 +38,8 @@ void (*const vector_table[256])(void) = {
     unused_isr,
     unused_isr,
     unused_isr,
-    [16 ... 255] = unused_isr
+    [16 ... 255] = unused_isr,
+    [36] = DMA4_DMA20_IRQHandler,
 };
 
 // fault_isr and unused_isr go in .flashmem so they're in FLASH

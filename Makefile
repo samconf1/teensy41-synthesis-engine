@@ -9,7 +9,7 @@ CPU_FLAGS = \
     -mfloat-abi=hard
 
 CFLAGS = $(CPU_FLAGS) \
-    -O2 \
+    -O3 \
     -ffunction-sections \
     -fdata-sections \
     -fno-builtin \
@@ -18,7 +18,10 @@ CFLAGS = $(CPU_FLAGS) \
     -I./lib \
     -I./periph \
     -I./lib/sdk \
-    -DCPU_MIMXRT1062DVL6A
+    -I./audio_driver \
+    -DCPU_MIMXRT1062DVL6A \
+    -D__FPU_PRESENT=1
+
 
 
 LDFLAGS = $(CPU_FLAGS) \
@@ -30,7 +33,7 @@ LDFLAGS = $(CPU_FLAGS) \
     -lgcc \
     -lm
 
-SRCS = $(wildcard *.c) $(wildcard lib/*.c) $(wildcard periph/*.c) $(wildcard lib/sdk/*.c)
+SRCS = $(wildcard *.c) $(wildcard lib/*.c) $(wildcard periph/*.c) $(wildcard lib/sdk/*.c) $(wildcard audio_driver/*.c)
 OBJS = $(SRCS:.c=.o)
 TARGET = firmware
 
