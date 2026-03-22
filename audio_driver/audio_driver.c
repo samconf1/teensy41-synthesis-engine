@@ -1,6 +1,7 @@
 #include "audio_driver.h"
 #include "audio_preinit.h"
 #include <stdint.h>
+#include <math.h>
 #include "fsl_edma.h"
 #include "fsl_dmamux.h"
 #include "fsl_common.h"
@@ -11,6 +12,7 @@
 #include "core_cm7.h"
 
 #define DMA_CHANNEL 20
+
 static void dma_callback_manual(void);
 void enable_system_clocks(void);
 void sai_init(void);
@@ -21,7 +23,6 @@ void start_audio(void) {
     enable_system_clocks();
     sai_init();
     dma_init();
-    return;
 }
 
 
@@ -51,9 +52,6 @@ void enable_system_clocks(void) {
 
 
 void sai_init(void) {
-    if (zero_block == NULL) {
-        return;
-    }
 
     uint32_t sai1_mclk = CLOCK_GetClockRootFreq(kCLOCK_Sai1ClkRoot);
 
@@ -65,7 +63,7 @@ void sai_init(void) {
     IOMUXC_SetPinConfig(IOMUXC_GPIO_B1_01_SAI1_TX_DATA00, 0x10B0U);
     IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_15_SAI1_TX_SYNC, 0x10B0U);
     
-    SAI_Init(SAI1);
+    SAI_Init(SAI1); 
     SAI_TxReset(SAI1);
 
     sai_transceiver_t tx_config;
@@ -196,9 +194,36 @@ static void dma_callback_manual(void) {
     DMA0->TCD[DMA_CHANNEL].CITER_ELINKNO = iterations;
     DMA0->TCD[DMA_CHANNEL].BITER_ELINKNO = iterations;
     DMA0->TCD[DMA_CHANNEL].CSR = DMA_CSR_INTMAJOR_MASK;  // reenable interrupt
+}
 
+void send_to_buffer(float *block) {
+    uint16_t read_ptr, write_ptr;
+    get_buffer_ptrs(&read_ptr, &write_ptr);
 
+    for (int i = 0; i < block_length/2; i++) {
+        block[i] = block[i] * 32767.0f; //expand to 16 bit integer.
+        block[i] = fmaxf(fminf(block[i], 32767.0f), -32768.0f); //prevent clipping
+
+        ring_buffer[write_ptr] = (int16_t)block[i];
+        write_ptr = (write_ptr + 1) % buffer_size; // left
+
+        ring_buffer[write_ptr] = (int16_t)block[i];
+        write_ptr = (write_ptr + 1) % buffer_size; // right
+    }
+    
+
+    set_write_ptr(write_ptr);
 }
 
 
+void generate_sine_block(float *block, float *phase, float frequency)
+{
+    float phase_inc = (2.0f * 3.14159265f * frequency) / (float)sample_rate;
 
+    for (int i = 0; i < block_length / 2; i++) {
+        block[i] = sinf(*phase);
+        *phase += phase_inc;
+        if (*phase >= 2.0f * 3.14159265f)
+            *phase -= 2.0f * 3.14159265f;
+    }
+}

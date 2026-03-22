@@ -1,33 +1,38 @@
 #include <stdint.h>
+#include "audio_driver.h"
+#include "audio_preinit.h"
+#include "usb_cdc_api.h"
 
 
-#define CCM_CCGR1        (*(volatile uint32_t *)0x400FC06C)
-#define IOMUXC_SW_MUX_CTL_PAD_GPIO_B0_03 (*(volatile uint32_t *)0x401F8148)
-#define GPIO2_DR         (*(volatile uint32_t *)0x401BC000)
-#define GPIO2_GDIR       (*(volatile uint32_t *)0x401BC004)
+static float audio_block[256];
+static float sine_phase = 0.0f;
 
-static void delay(volatile uint32_t n)
-{
-    while (n--);
-}
+int main(void) {
 
-int main(void)
-{
-    // Enable GPIO2 clock
-    CCM_CCGR1 |= (3 << 26);
+    usb_init();
+    start_audio();
+    for (volatile uint32_t i = 0; i < 10000000; i++);
 
-    // Mux pin 13 to GPIO (ALT5)
-    IOMUXC_SW_MUX_CTL_PAD_GPIO_B0_03 = 5;
-
-    // Set pin as output
-    GPIO2_GDIR |= (1 << 3);
+    usb_serial_write("booted\r\n", 8);
 
     while (1) {
-        GPIO2_DR |=  (1 << 3);
-        delay(30000000);
-        GPIO2_DR &= ~(1 << 3);
-        delay(60000000);
-    }
+        uint16_t read_ptr, write_ptr;
+        get_buffer_ptrs(&read_ptr, &write_ptr);
 
-    return 0;
+        // calculate free space in ring buffer
+        uint16_t free_space;
+        if (write_ptr >= read_ptr)
+            free_space = buffer_size - (write_ptr - read_ptr) - 1;
+        else
+            free_space = read_ptr - write_ptr - 1;
+
+        // only generate if theres room for a full block
+        if (free_space >= block_length) {
+            generate_sine_block(audio_block, &sine_phase, 440.0f);
+            send_to_buffer(audio_block);
+    }
+}
+
+return 0;
+
 }

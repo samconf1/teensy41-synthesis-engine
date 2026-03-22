@@ -120,6 +120,16 @@ void ResetHandler(void)
     SCB_CCR |= (1 << 16);
     __asm volatile("dsb");
     __asm volatile("isb");
+    
+    // Copy vector table to RAM and point VTOR there
+    //ONly for usb_cdc
+    extern volatile uint32_t _VectorsRam[];
+    extern void (*const vector_table[256])(void);
+    #define SCB_VTOR (*(volatile uint32_t *)0xE000ED08)
+    for (int i = 0; i < 256; i++)
+        _VectorsRam[i] = ((volatile uint32_t *)vector_table)[i];
+
+    SCB_VTOR = (uint32_t)_VectorsRam;
 
     main();
 

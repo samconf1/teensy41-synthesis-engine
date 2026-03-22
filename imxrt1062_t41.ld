@@ -96,6 +96,7 @@ SECTIONS
 	_ebss = ADDR(.bss) + SIZEOF(.bss);
 
 	_heap_start = ADDR(.bss.dma) + SIZEOF(.bss.dma);
+	end = _heap_start;
 	_heap_end = ORIGIN(RAM) + LENGTH(RAM);
 
 	_extram_start = ADDR(.bss.extram);
