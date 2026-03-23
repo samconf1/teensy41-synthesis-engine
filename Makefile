@@ -16,7 +16,7 @@ CFLAGS = $(CPU_FLAGS) \
     -DARDUINO_TEENSY41 \
     -Wall \
     -I./lib \
-    -I./periph \
+    -I./lib/periph \
     -I./lib/sdk \
     -I./audio_driver \
     -DCPU_MIMXRT1062DVL6A \
@@ -30,8 +30,8 @@ USB_CFLAGS = $(CPU_FLAGS) \
     -fno-builtin \
     -DARDUINO_TEENSY41 \
     -Wall \
-    -I./usb_cdc \
-    -I./usb_cdc/avr \
+    -I./lib/usb_cdc \
+    -I./lib/usb_cdc/avr \
     -DCPU_MIMXRT1062DVL6A \
     -D__FPU_PRESENT=1 \
     -DLAYOUT_US_ENGLISH \
@@ -46,8 +46,8 @@ LDFLAGS = $(CPU_FLAGS) \
 
 LIBS = -lc -lm -lgcc
 
-SRCS     = $(wildcard *.c) $(wildcard lib/*.c) $(wildcard periph/*.c) $(wildcard lib/sdk/*.c) $(wildcard audio_driver/*.c)
-USB_SRCS = $(wildcard usb_cdc/*.c)
+SRCS     = $(wildcard *.c) $(wildcard lib/*.c) $(wildcard lib/periph/*.c) $(wildcard lib/sdk/*.c) $(wildcard audio_driver/*.c)
+USB_SRCS = $(wildcard lib/usb_cdc/*.c)
 ALL_SRCS = $(SRCS) $(USB_SRCS)
 
 OBJS     = $(SRCS:.c=.o)
