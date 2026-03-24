@@ -1,7 +1,7 @@
 #include "uart.h"
 #include <stdint.h>
 
-#define CCM_CCGR3       (*(volatile uint32_t *)0x400FC074)
+#define CCM_CCGR3       (*(volatile uint32_t *)0x400FC074) //Clock control module gate register
 #define CCM_CSCDR1      (*(volatile uint32_t *)0x400FC024)
 
 #define LPUART6_BASE    0x40198000

@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include "audio_driver.h"
 #include "audio_preinit.h"
-#include "usb_cdc_api.h"
+//#include "usb_cdc_api.h"
 
 
 static float audio_block[256];
@@ -13,7 +13,10 @@ int main(void) {
     start_audio();
     for (volatile uint32_t i = 0; i < 10000000; i++);
 
-    usb_serial_write("booted\r\n", 8);
+    //while (1) {
+        //usb_serial_write("booted\r\n", 8);
+       // for (volatile uint32_t i = 0; i < 2000000; i++);
+    //}
 
     while (1) {
         uint16_t read_ptr, write_ptr;
