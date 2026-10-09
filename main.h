@@ -1,0 +1,84 @@
+#include <stdint.h>
+
+enum {
+    MIXER_1,
+    MIXER_2,
+    MIXER_3,
+    MIXER_4
+    MIXER_SUB,
+    MIXER_NOISE,
+    OSC1_OCT,
+    OSC2_OCT,
+    OSC3_OCT,
+    OSC4_OCT,
+    OSC1_WAVE,
+    OSC2_WAVE,
+    OSC3_WAVE,
+    OSC4_WAVE,
+    OSC1_UNISON,
+    OSC2_UNISON,
+    OSC3_UNISON,
+    OSC4_UNISON,
+    OSC1_DETUNE,
+    OSC2_DETUNE,
+    OSC3_DETUNE,
+    OSC4_DETUNE,
+    ENV1_ATTACK,
+    ENV2_ATTACK,
+    ENV3_ATTACK,
+    ENV4_ATTACK,
+    ENV1_DECAY,
+    ENV2_DECAY,
+    ENV3_DECAY,
+    ENV4_DECAY,
+    ENV1_SUSTAIN,
+    ENV2_SUSTAIN,
+    ENV3_SUSTAIN,
+    ENV4_SUSTAIN,
+    ENV1_RELEASE,
+    ENV2_RELEASE,
+    ENV3_RELEASE,
+    ENV4_RELEASE,
+    LFO1_ON,
+    LFO1_WAVE,
+    LFO1_RATE,
+    LFO1_DEPTH,
+    LFO2_ON,
+    LFO2_WAVE,
+    LFO2_RATE,
+    LFO2_DEPTH,
+    EFFECTS_LEVEL,
+    EFFECTS_MIX,
+    REVERB_DECAY,
+    REVERB_DAMP,
+    CHORUS_RATE,
+    CHORUS_DEPTH,
+    DELAY_TIME,
+    DELAY_FEEDBACK,
+    DELAY_FILTER,
+    PORTA_TIME,
+    LOOPER_LENGTH,
+    LOOPER_BPM,
+    LOOPER_ON,
+    FILTER_RESONANCE,
+    FILTER_CUTOFF,
+    FILTER_DRIVE,
+    MASTER_LEVEL,
+
+    PARAM_COUNT
+};
+
+typedef struct {
+    volatile float target; 
+
+} param_t;
+
+extern param_t params[PARAM_COUNT];
+
+void poll_all(void);
+void main(void);
+
+
+
+
+

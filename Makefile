@@ -46,7 +46,7 @@ LDFLAGS = $(CPU_FLAGS) \
 
 LIBS = -lc -lm -lgcc
 
-SRCS     = $(wildcard *.c) $(wildcard lib/*.c) $(wildcard lib/periph/*.c) $(wildcard lib/sdk/*.c) $(wildcard audio_driver/*.c)
+SRCS     = $(wildcard *.c) $(wildcard lib/*.c) $(wildcard lib/periph/*.c) $(wildcard lib/sdk/*.c) $(wildcard audio_driver/*.c) $(wildcard device_drivers/*.c)
 USB_SRCS = $(wildcard lib/usb_cdc/*.c)
 ALL_SRCS = $(SRCS) $(USB_SRCS)
 

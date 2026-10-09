@@ -10,6 +10,7 @@
 #include "fsl_iomuxc.h"
 #include "MIMXRT1062.h"
 #include "core_cm7.h"
+#include "pcm5102.h"
 
 #define DMA_CHANNEL 20
 
@@ -76,8 +77,8 @@ void sai_init(void) {
     SAI_TxSetConfig(SAI1, &tx_config);
 
     sai_fifo_t fifo_config = {
-    .fifoWatermark = 8
-};
+    .fifoWatermark = 8 
+    };
 
     SAI1->TCR4 &= ~(0x3UL << 24); 
     SAI1->TCR4 |= (0x3UL << 24);
@@ -91,16 +92,7 @@ void sai_init(void) {
 }
 
 void dma_init(void) {
-    
-    DMAMUX_Init(DMAMUX);
-    DMAMUX->CHCFG[20] = 0x00000000; //disable dma
-    for (volatile int i = 0; i < 100; i++);
-
-    DMAMUX->CHCFG[20] = 0x00000014;  // set source 20 but keep disabled
-    for (volatile int i = 0; i < 100; i++);
-
-    DMAMUX->CHCFG[20] = 0x80000014;  // enable channel 20 and keep source 20
-    for (volatile int i = 0; i < 100; i++);
+    pcm5102_init();
 
     edma_config_t edma_config;
     EDMA_GetDefaultConfig(&edma_config);
@@ -125,6 +117,7 @@ void dma_init(void) {
     DMA0->TCD[DMA_CHANNEL].CSR = DMA_CSR_INTMAJOR_MASK;
     DMA0->TCD[DMA_CHANNEL].BITER_ELINKNO = iterations;
     DMA0->TCD[DMA_CHANNEL].SOFF = 4;
+
 
     
     SAI_TxEnable(SAI1, true);
@@ -155,7 +148,7 @@ void dma_init(void) {
 
 
 void DMA4_DMA20_IRQHandler(void) { //interrupt handler
-    if (!audio_running) {
+    if (!auso_running) {
         DMA0->CINT = DMA_CHANNEL; //clear interrupt
         dma_callback_manual();
         return;
